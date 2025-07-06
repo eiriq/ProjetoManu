@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Galeria Material You</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🖼️</text></svg>">
+    <link rel="icon" href="icone.png">
     <style>
         :root {
             --primary: #D94343;
@@ -20,10 +20,10 @@
             --outline: #E4B3B3;
             
             --corner-radius: 20px;
-            --grid-gap: 20px;
+            --grid-gap: 16px;
             --card-padding: 16px;
             --transition-duration: 350ms;
-            --section-spacing: 40px;
+            --section-spacing: 30px;
         }
 
         * {
@@ -48,8 +48,37 @@
             to { opacity: 1; }
         }
 
+        .close-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background-color: var(--primary);
+            color: var(--on-primary);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-duration) ease;
+            z-index: 100;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .close-btn:hover {
+            transform: scale(1.1);
+            background-color: var(--on-primary-container);
+        }
+
+        .close-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
             opacity: 0;
             transform: translateY(20px);
@@ -72,7 +101,7 @@
         h1 {
             color: var(--primary);
             font-weight: 500;
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             margin-bottom: 12px;
             letter-spacing: -0.5px;
         }
@@ -80,14 +109,14 @@
         .subtitle {
             color: var(--secondary);
             font-weight: 400;
-            font-size: 1.1rem;
+            font-size: 1rem;
             max-width: 600px;
             margin: 0 auto;
         }
 
         .gallery {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: var(--grid-gap);
             margin: 0 auto;
         }
@@ -451,14 +480,16 @@
         }
 
         .loading-text {
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             color: var(--on-primary-container);
             margin-bottom: 20px;
             font-weight: 500;
+            line-height: 1.5;
+            padding: 0 10px;
         }
 
         .loading-bar {
-            height: 10px;
+            height: 8px;
             background-color: var(--primary-container);
             border-radius: 5px;
             overflow: hidden;
@@ -482,26 +513,26 @@
         @media (max-width: 1200px) {
             :root {
                 --corner-radius: 18px;
-                --grid-gap: 18px;
+                --grid-gap: 16px;
             }
         }
 
         @media (max-width: 992px) {
             :root {
-                --section-spacing: 32px;
+                --section-spacing: 28px;
             }
 
             h1 {
-                font-size: 2.2rem;
+                font-size: 2rem;
             }
         }
 
         @media (max-width: 768px) {
             :root {
                 --corner-radius: 16px;
-                --grid-gap: 16px;
+                --grid-gap: 14px;
                 --card-padding: 12px;
-                --section-spacing: 28px;
+                --section-spacing: 24px;
             }
 
             body {
@@ -509,11 +540,11 @@
             }
 
             .gallery {
-                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             }
 
             h1 {
-                font-size: 2rem;
+                font-size: 1.8rem;
             }
 
             .lightbox-nav {
@@ -524,25 +555,37 @@
                 max-width: 70%;
                 font-size: 0.9rem;
             }
+
+            .close-btn {
+                top: 15px;
+                left: 15px;
+                width: 36px;
+                height: 36px;
+            }
+
+            .close-btn svg {
+                width: 20px;
+                height: 20px;
+            }
         }
 
         @media (max-width: 576px) {
             :root {
                 --corner-radius: 14px;
-                --grid-gap: 14px;
-                --section-spacing: 24px;
+                --grid-gap: 12px;
+                --section-spacing: 20px;
             }
 
             .gallery {
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             }
 
             h1 {
-                font-size: 1.8rem;
+                font-size: 1.6rem;
             }
 
             .subtitle {
-                font-size: 1rem;
+                font-size: 0.95rem;
             }
 
             .lightbox-nav button,
@@ -569,16 +612,40 @@
             }
             
             .loading-text {
-                font-size: 1.1rem;
+                font-size: 1rem;
+            }
+
+            .close-btn {
+                top: 12px;
+                left: 12px;
+                width: 32px;
+                height: 32px;
+            }
+
+            .close-btn svg {
+                width: 18px;
+                height: 18px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .gallery {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
             }
         }
     </style>
 </head>
 <body>
+    <button class="close-btn" id="close-page-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+        </svg>
+    </button>
+
     <div class="container">
         <header>
-            <h1>Nossa galeria :D</h1>
-            <p class="subtitle">Pra gente, da gente. Pra guardar nossos momentos felizes:)</p>
+            <h1>Galeria Material You</h1>
+            <p class="subtitle">Uma galeria moderna com design Material You e tons vermelhos</p>
         </header>
 
         <div class="gallery" id="gallery">
@@ -697,6 +764,7 @@
             const fullscreenBtn = document.getElementById('fullscreen-btn');
             const downloadBtn = document.getElementById('download-btn');
             const loadingContainer = document.getElementById('loading-container');
+            const closePageBtn = document.getElementById('close-page-btn');
 
             let currentIndex = 0;
             let isFullscreen = false;
@@ -953,6 +1021,9 @@
             closeBtn.addEventListener('click', fecharLightbox);
             fullscreenBtn.addEventListener('click', alternarTelaCheia);
             downloadBtn.addEventListener('click', baixarArquivo);
+            closePageBtn.addEventListener('click', () => {
+                window.location.href = 'index.html';
+            });
             
             // Fechar lightbox ao clicar no fundo
             lightbox.addEventListener('click', (e) => {
