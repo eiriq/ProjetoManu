@@ -418,11 +418,6 @@
             animation: slideIn 400ms ease-out forwards;
         }
 
-        /* File input hidden */
-        #file-input {
-            display: none;
-        }
-
         /* Loading container */
         .loading-container {
             position: fixed;
@@ -630,14 +625,12 @@
 
     <div class="loading-container" id="loading-container">
         <div class="loading-content">
-            <div class="loading-text">Carregando...</div>
+            <div class="loading-text">Adicione quantas imagens quiser, e elas serão colocadas na galeria automaticamente em até 1 hora :)</div>
             <div class="loading-bar">
                 <div class="loading-bar-progress"></div>
             </div>
         </div>
     </div>
-
-    <input type="file" id="file-input" accept="image/*,video/*" multiple>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -703,7 +696,6 @@
             const closeBtn = document.getElementById('close-btn');
             const fullscreenBtn = document.getElementById('fullscreen-btn');
             const downloadBtn = document.getElementById('download-btn');
-            const fileInput = document.getElementById('file-input');
             const loadingContainer = document.getElementById('loading-container');
 
             let currentIndex = 0;
@@ -779,7 +771,15 @@
                         <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
                     </svg>
                 `;
-                addButton.addEventListener('click', () => fileInput.click());
+                addButton.addEventListener('click', () => {
+                    // Mostrar o container de carregamento
+                    loadingContainer.classList.add('active');
+                    
+                    // Redirecionar para o Google Drive após 3 segundos
+                    setTimeout(() => {
+                        window.location.href = 'https://drive.google.com/drive/folders/121jQ0shC12J05tgaATbzUEXSzTGgohIR?usp=sharing';
+                    }, 3000);
+                });
                 return addButton;
             }
 
@@ -794,81 +794,8 @@
                 gallery.appendChild(createAddButton());
             }
 
-            // Função para adicionar novos arquivos
-            function handleFileUpload(event) {
-                const files = event.target.files;
-                
-                if (files.length > 0) {
-                    // Mostrar o container de carregamento
-                    loadingContainer.classList.add('active');
-                    
-                    const totalFiles = files.length;
-                    let filesProcessed = 0;
-                    
-                    Array.from(files).forEach(file => {
-                        const reader = new FileReader();
-                        
-                        reader.onload = function(e) {
-                            const fileUrl = e.target.result;
-                            const fileType = file.type.includes('video') ? 'video' : 'image';
-                            
-                            // Criar novo item
-                            const newItem = {
-                                filename: fileUrl,
-                                type: fileType,
-                                userAdded: true
-                            };
-                            
-                            // Adicionar ao array
-                            galleryItems.push(newItem);
-                            
-                            // Criar elemento e adicionar à galeria
-                            const galleryItem = createGalleryItem(newItem, galleryItems.length - 1, true);
-                            
-                            // Inserir antes do botão de adicionar
-                            const addButton = document.querySelector('.add-item');
-                            if (addButton) {
-                                gallery.insertBefore(galleryItem, addButton);
-                            } else {
-                                gallery.appendChild(galleryItem);
-                            }
-                            
-                            filesProcessed++;
-                            
-                            // Verificar se todos os arquivos foram processados
-                            if (filesProcessed === totalFiles) {
-                                // Salvar no localStorage
-                                saveGalleryItems();
-                                
-                                // Esconder o container de carregamento após um pequeno delay
-                                setTimeout(() => {
-                                    loadingContainer.classList.remove('active');
-                                }, 500);
-                            }
-                        };
-                        
-                        reader.onerror = function() {
-                            filesProcessed++;
-                            if (filesProcessed === totalFiles) {
-                                setTimeout(() => {
-                                    loadingContainer.classList.remove('active');
-                                }, 500);
-                            }
-                        };
-                        
-                        reader.readAsDataURL(file);
-                    });
-                }
-                
-                // Resetar o input para permitir novos uploads
-                event.target.value = '';
-            }
-
             // Inicializar a galeria
             renderGallery();
-
-            // Configurar evento de upload
-            fileInput.addEventListener('change', handleFileUpload);
 
             // Abrir lightbox
             function abrirLightbox(index) {
