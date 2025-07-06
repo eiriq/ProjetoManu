@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Material You Gallery</title>
+    <title>Galeria Material You</title>
+    <link rel="icon" href="icon.png" type="image/png">
     <style>
         :root {
             --primary: #D94343;
@@ -18,10 +19,11 @@
             --tertiary: #E26A6A;
             --outline: #E4B3B3;
             
-            --corner-radius: 16px;
-            --grid-gap: 24px;
+            --corner-radius: 20px;
+            --grid-gap: 20px;
             --card-padding: 16px;
-            --transition-duration: 300ms;
+            --transition-duration: 350ms;
+            --section-spacing: 40px;
         }
 
         * {
@@ -34,33 +36,60 @@
             font-family: 'Roboto', system-ui, -apple-system, sans-serif;
             background-color: var(--background);
             color: var(--on-background);
-            padding: 24px;
-            line-height: 1.5;
+            padding: var(--section-spacing);
+            line-height: 1.6;
+            min-height: 100vh;
+            opacity: 0;
+            animation: fadeInBody 800ms ease-out forwards;
+        }
+
+        @keyframes fadeInBody {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInContent 600ms ease-out 200ms forwards;
+        }
+
+        @keyframes fadeInContent {
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         header {
-            margin-bottom: 32px;
+            margin-bottom: var(--section-spacing);
             text-align: center;
+            padding: 0 var(--card-padding);
         }
 
         h1 {
             color: var(--primary);
             font-weight: 500;
             font-size: 2.5rem;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
         }
 
         .subtitle {
             color: var(--secondary);
             font-weight: 400;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
         .gallery {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: var(--grid-gap);
             margin: 0 auto;
-            max-width: 1600px;
         }
 
         .gallery-item {
@@ -68,17 +97,53 @@
             border-radius: var(--corner-radius);
             overflow: hidden;
             background-color: var(--surface);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            transition: all var(--transition-duration) ease;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            transition: all var(--transition-duration) cubic-bezier(0.25, 0.8, 0.25, 1);
             aspect-ratio: 1 / 1;
             cursor: pointer;
             border: 1px solid var(--outline);
+            opacity: 0;
+            transform: scale(0.95);
+            animation: fadeInItem 500ms ease-out forwards;
+            animation-delay: calc(var(--item-order) * 50ms + 400ms);
         }
 
-        .gallery-item:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-            border-color: var(--tertiary);
+        .gallery-item.user-added .remove-btn {
+            display: flex;
+        }
+
+        .add-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--primary-container);
+            border: 2px dashed var(--primary);
+            cursor: pointer;
+            transition: all var(--transition-duration) ease;
+        }
+
+        .add-item:hover {
+            background-color: var(--primary);
+            border-color: var(--on-primary);
+        }
+
+        .add-item svg {
+            width: 48px;
+            height: 48px;
+            fill: var(--primary);
+            transition: all var(--transition-duration) ease;
+        }
+
+        .add-item:hover svg {
+            fill: var(--on-primary);
+            transform: scale(1.1);
+        }
+
+        @keyframes fadeInItem {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
         .gallery-item img,
@@ -92,14 +157,14 @@
 
         .gallery-item:hover img,
         .gallery-item:hover video {
-            transform: scale(1.05);
+            transform: scale(1.06);
         }
 
         .gallery-item::after {
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.3), transparent 40%);
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.3), transparent 50%);
             opacity: 0;
             transition: opacity var(--transition-duration) ease;
         }
@@ -108,23 +173,119 @@
             opacity: 1;
         }
 
+        .item-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 16px;
+            z-index: 1;
+            transform: translateY(100%);
+            transition: transform var(--transition-duration) ease;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
+            color: white;
+            border-bottom-left-radius: var(--corner-radius);
+            border-bottom-right-radius: var(--corner-radius);
+        }
+
+        .gallery-item:hover .item-info {
+            transform: translateY(0);
+        }
+
         .item-type {
             position: absolute;
             top: 12px;
             right: 12px;
             background-color: var(--primary-container);
             color: var(--on-primary-container);
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.75rem;
+            padding: 5px 10px;
+            border-radius: 16px;
+            font-size: 0.8rem;
             font-weight: 500;
             z-index: 1;
             opacity: 0;
             transition: opacity var(--transition-duration) ease;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background-color: var(--primary);
+            color: var(--on-primary);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            cursor: pointer;
+            transition: all var(--transition-duration) ease;
+            opacity: 0;
+            border: none;
+        }
+
+        .gallery-item:hover .remove-btn {
+            opacity: 1;
+        }
+
+        .remove-btn svg {
+            width: 16px;
+            height: 16px;
         }
 
         .gallery-item:hover .item-type {
             opacity: 1;
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 245, 245, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity var(--transition-duration) ease, visibility var(--transition-duration) ease;
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loading-text {
+            color: var(--on-background);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .loading-bar {
+            width: 200px;
+            height: 8px;
+            background-color: var(--outline);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .loading-progress {
+            height: 100%;
+            width: 0%;
+            background-color: var(--primary);
+            border-radius: 4px;
+            transition: width 0.3s ease;
         }
 
         /* Lightbox styles */
@@ -134,7 +295,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
+            background-color: rgba(0, 0, 0, 0.95);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -163,7 +324,7 @@
             max-width: 100%;
             max-height: 80vh;
             border-radius: var(--corner-radius);
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
         }
 
         .lightbox-nav {
@@ -190,13 +351,13 @@
             justify-content: center;
             cursor: pointer;
             transition: all var(--transition-duration) ease;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
         }
 
         .lightbox-nav button:hover {
             background-color: var(--primary);
             color: var(--on-primary);
-            transform: scale(1.1);
+            transform: scale(1.12);
         }
 
         .lightbox-nav button svg {
@@ -204,34 +365,16 @@
             height: 24px;
         }
 
-        .lightbox-close {
-            position: absolute;
-            top: 24px;
-            right: 24px;
-            background-color: var(--primary-container);
-            color: var(--on-primary-container);
-            border: none;
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all var(--transition-duration) ease;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .lightbox-close:hover {
-            background-color: var(--primary);
-            color: var(--on-primary);
-            transform: scale(1.1);
-        }
-
-        .lightbox-fullscreen {
+        .lightbox-controls {
             position: absolute;
             bottom: 24px;
             right: 24px;
+            display: flex;
+            gap: 12px;
+            z-index: 2;
+        }
+
+        .lightbox-controls button {
             background-color: var(--primary-container);
             color: var(--on-primary-container);
             border: none;
@@ -243,27 +386,32 @@
             justify-content: center;
             cursor: pointer;
             transition: all var(--transition-duration) ease;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
         }
 
-        .lightbox-fullscreen:hover {
+        .lightbox-controls button:hover {
             background-color: var(--primary);
             color: var(--on-primary);
-            transform: scale(1.1);
+            transform: scale(1.12);
+        }
+
+        .lightbox-controls button svg {
+            width: 22px;
+            height: 22px;
         }
 
         .lightbox-caption {
             position: absolute;
             bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%);
+            left: 24px;
             background-color: rgba(0, 0, 0, 0.7);
             color: white;
-            padding: 8px 16px;
+            padding: 10px 20px;
             border-radius: var(--corner-radius);
-            font-size: 0.9rem;
-            max-width: 80%;
-            text-align: center;
+            font-size: 0.95rem;
+            max-width: 60%;
+            text-align: left;
+            backdrop-filter: blur(4px);
         }
 
         /* Fullscreen styles */
@@ -274,25 +422,25 @@
             border-radius: 0;
         }
 
-        .lightbox.fullscreen .lightbox-close {
-            top: 16px;
-            right: 16px;
-        }
-
-        .lightbox.fullscreen .lightbox-fullscreen {
+        .lightbox.fullscreen .lightbox-controls {
             bottom: 16px;
             right: 16px;
         }
 
+        .lightbox.fullscreen .lightbox-caption {
+            bottom: 16px;
+            left: 16px;
+        }
+
         /* Fade animations */
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; }
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(10px); }
         }
 
         .fade-in {
@@ -303,12 +451,64 @@
             animation: fadeOut var(--transition-duration) ease forwards;
         }
 
+        /* File input hidden */
+        #file-input {
+            display: none;
+        }
+
         /* Responsive adjustments */
+        @media (max-width: 1200px) {
+            :root {
+                --corner-radius: 18px;
+                --grid-gap: 18px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            :root {
+                --section-spacing: 32px;
+            }
+
+            h1 {
+                font-size: 2.2rem;
+            }
+        }
+
         @media (max-width: 768px) {
             :root {
-                --corner-radius: 12px;
+                --corner-radius: 16px;
                 --grid-gap: 16px;
                 --card-padding: 12px;
+                --section-spacing: 28px;
+            }
+
+            body {
+                padding: var(--section-spacing) 16px;
+            }
+
+            .gallery {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .lightbox-nav {
+                padding: 0 16px;
+            }
+
+            .lightbox-caption {
+                max-width: 70%;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            :root {
+                --corner-radius: 14px;
+                --grid-gap: 14px;
+                --section-spacing: 24px;
             }
 
             .gallery {
@@ -316,29 +516,43 @@
             }
 
             h1 {
-                font-size: 2rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            :root {
-                --corner-radius: 8px;
+                font-size: 1.8rem;
             }
 
-            .gallery {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .lightbox-nav button,
+            .lightbox-controls button {
+                width: 42px;
+                height: 42px;
+            }
+
+            .lightbox-nav button svg,
+            .lightbox-controls button svg {
+                width: 20px;
+                height: 20px;
+            }
+
+            .lightbox-caption {
+                max-width: 80%;
+                padding: 8px 16px;
+                font-size: 0.85rem;
             }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Material You Gallery</h1>
-        <p class="subtitle">A beautiful gallery with Material You design</p>
-    </header>
+    <div class="container">
+        <header>
+            <h1>Galeria Material You</h1>
+            <p class="subtitle">Uma galeria moderna com design Material You e tons vermelhos</p>
+        </header>
 
-    <div class="gallery" id="gallery">
-        <!-- Gallery items will be inserted here by JavaScript -->
+        <div class="gallery" id="gallery">
+            <!-- Itens da galeria serão inseridos aqui pelo JavaScript -->
+        </div>
     </div>
 
     <div class="lightbox" id="lightbox">
@@ -359,22 +573,41 @@
                 </svg>
             </button>
         </div>
-        <button class="lightbox-close" id="close-btn">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-            </svg>
-        </button>
-        <button class="lightbox-fullscreen" id="fullscreen-btn">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
-            </svg>
-        </button>
+        <div class="lightbox-controls">
+            <button id="download-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                </svg>
+            </button>
+            <button id="fullscreen-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+                </svg>
+            </button>
+            <button id="close-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                </svg>
+            </button>
+        </div>
     </div>
+
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-text">Carregando...</div>
+        <div class="loading-bar">
+            <div class="loading-progress" id="loading-progress"></div>
+        </div>
+    </div>
+
+    <input type="file" id="file-input" accept="image/*,video/*" multiple>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Gallery items data
-            const galleryItems = [
+            // Chave para armazenamento local
+            const STORAGE_KEY = 'materialYouGalleryItems';
+            
+            // Dados iniciais dos itens da galeria
+            const initialGalleryItems = [
                 { filename: '1.jpeg', type: 'image' },
                 { filename: '2.jpeg', type: 'image' },
                 { filename: '3.jpeg', type: 'image' },
@@ -419,6 +652,9 @@
                 { filename: '42.mp4', type: 'video' }
             ];
 
+            // Carregar itens do localStorage ou usar os iniciais
+            let galleryItems = JSON.parse(localStorage.getItem(STORAGE_KEY)) || initialGalleryItems;
+
             const gallery = document.getElementById('gallery');
             const lightbox = document.getElementById('lightbox');
             const lightboxImage = document.getElementById('lightbox-image');
@@ -428,36 +664,171 @@
             const nextBtn = document.getElementById('next-btn');
             const closeBtn = document.getElementById('close-btn');
             const fullscreenBtn = document.getElementById('fullscreen-btn');
+            const downloadBtn = document.getElementById('download-btn');
+            const fileInput = document.getElementById('file-input');
+            const loadingOverlay = document.getElementById('loading-overlay');
+            const loadingProgress = document.getElementById('loading-progress');
 
             let currentIndex = 0;
             let isFullscreen = false;
 
-            // Create gallery items
-            galleryItems.forEach((item, index) => {
+            // Função para salvar itens no localStorage
+            function saveGalleryItems() {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(galleryItems));
+            }
+
+            // Função para criar um item da galeria
+            function createGalleryItem(item, index) {
                 const galleryItem = document.createElement('div');
                 galleryItem.className = 'gallery-item';
                 galleryItem.dataset.index = index;
+                galleryItem.style.setProperty('--item-order', index);
+                
+                if (item.userAdded) {
+                    galleryItem.classList.add('user-added');
+                }
+                
+                const itemInfo = document.createElement('div');
+                itemInfo.className = 'item-info';
+                itemInfo.innerHTML = `<p>${item.filename.split('/').pop()}</p>`;
                 
                 if (item.type === 'image') {
                     galleryItem.innerHTML = `
-                        <img src="${item.filename}" alt="Gallery image ${index + 1}" loading="lazy">
-                        <div class="item-type">Image</div>
+                        <img src="${item.filename}" alt="Imagem da galeria ${index + 1}" loading="lazy">
+                        <div class="item-type">Imagem</div>
                     `;
                 } else {
                     galleryItem.innerHTML = `
                         <video muted loop>
                             <source src="${item.filename}" type="video/mp4">
                         </video>
-                        <div class="item-type">Video</div>
+                        <div class="item-type">Vídeo</div>
                     `;
                 }
                 
-                galleryItem.addEventListener('click', () => openLightbox(index));
-                gallery.appendChild(galleryItem);
-            });
+                // Adicionar botão de remover se for um item adicionado pelo usuário
+                if (item.userAdded) {
+                    const removeBtn = document.createElement('button');
+                    removeBtn.className = 'remove-btn';
+                    removeBtn.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                        </svg>
+                    `;
+                    removeBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        removerItem(index);
+                    });
+                    galleryItem.appendChild(removeBtn);
+                }
+                
+                galleryItem.appendChild(itemInfo);
+                galleryItem.addEventListener('click', () => abrirLightbox(index));
+                return galleryItem;
+            }
 
-            // Open lightbox
-            function openLightbox(index) {
+            // Função para remover um item
+            function removerItem(index) {
+                if (galleryItems[index].userAdded) {
+                    galleryItems.splice(index, 1);
+                    saveGalleryItems();
+                    renderGallery();
+                }
+            }
+
+            // Função para criar o botão de adicionar
+            function createAddButton() {
+                const addButton = document.createElement('div');
+                addButton.className = 'gallery-item add-item';
+                addButton.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                    </svg>
+                `;
+                addButton.addEventListener('click', () => fileInput.click());
+                return addButton;
+            }
+
+            // Função para renderizar a galeria
+            function renderGallery() {
+                gallery.innerHTML = '';
+                
+                galleryItems.forEach((item, index) => {
+                    gallery.appendChild(createGalleryItem(item, index));
+                });
+                
+                gallery.appendChild(createAddButton());
+            }
+
+            // Função para simular progresso de carregamento
+            function simulateLoadingProgress() {
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += Math.random() * 10;
+                    if (progress >= 100) {
+                        progress = 100;
+                        clearInterval(interval);
+                        setTimeout(() => {
+                            loadingOverlay.classList.remove('active');
+                        }, 300);
+                    }
+                    loadingProgress.style.width = `${progress}%`;
+                }, 200);
+            }
+
+            // Função para adicionar novos arquivos
+            function handleFileUpload(event) {
+                const files = event.target.files;
+                
+                if (files.length > 0) {
+                    // Mostrar overlay de carregamento
+                    loadingOverlay.classList.add('active');
+                    loadingProgress.style.width = '0%';
+                    simulateLoadingProgress();
+                    
+                    let filesProcessed = 0;
+                    
+                    Array.from(files).forEach(file => {
+                        const reader = new FileReader();
+                        
+                        reader.onload = function(e) {
+                            const fileUrl = e.target.result;
+                            const fileType = file.type.includes('video') ? 'video' : 'image';
+                            const fileName = file.name;
+                            
+                            // Adicionar novo item à lista
+                            galleryItems.push({
+                                filename: fileUrl,
+                                type: fileType,
+                                userAdded: true
+                            });
+                            
+                            filesProcessed++;
+                            
+                            // Quando todos os arquivos forem processados
+                            if (filesProcessed === files.length) {
+                                // Salvar e renderizar
+                                saveGalleryItems();
+                                renderGallery();
+                            }
+                        };
+                        
+                        reader.readAsDataURL(file);
+                    });
+                }
+                
+                // Resetar o input para permitir novos uploads
+                event.target.value = '';
+            }
+
+            // Inicializar a galeria
+            renderGallery();
+
+            // Configurar evento de upload
+            fileInput.addEventListener('change', handleFileUpload);
+
+            // Abrir lightbox
+            function abrirLightbox(index) {
                 currentIndex = index;
                 const item = galleryItems[currentIndex];
                 
@@ -473,44 +844,42 @@
                     lightboxVideo.play();
                 }
                 
-                lightboxCaption.textContent = item.filename;
+                lightboxCaption.textContent = item.filename.split('/').pop();
                 lightbox.classList.add('active');
                 document.body.style.overflow = 'hidden';
                 
-                // Add fade-in animation
                 lightbox.classList.add('fade-in');
                 setTimeout(() => {
                     lightbox.classList.remove('fade-in');
-                }, 300);
+                }, 350);
             }
 
-            // Close lightbox
-            function closeLightbox() {
+            // Fechar lightbox
+            function fecharLightbox() {
                 lightbox.classList.add('fade-out');
                 setTimeout(() => {
                     lightbox.classList.remove('active', 'fade-out');
                     document.body.style.overflow = '';
                     lightboxVideo.pause();
-                }, 300);
+                }, 350);
             }
 
-            // Navigate to previous item
-            function prevItem() {
+            // Navegar para o item anterior
+            function itemAnterior() {
                 currentIndex = (currentIndex - 1 + galleryItems.length) % galleryItems.length;
-                updateLightboxContent();
+                atualizarConteudoLightbox();
             }
 
-            // Navigate to next item
-            function nextItem() {
+            // Navegar para o próximo item
+            function proximoItem() {
                 currentIndex = (currentIndex + 1) % galleryItems.length;
-                updateLightboxContent();
+                atualizarConteudoLightbox();
             }
 
-            // Update lightbox content with fade animation
-            function updateLightboxContent() {
+            // Atualizar conteúdo do lightbox com animação
+            function atualizarConteudoLightbox() {
                 const item = galleryItems[currentIndex];
                 
-                // Add fade-out animation to current content
                 if (item.type === 'image') {
                     lightboxImage.classList.add('fade-out');
                 } else {
@@ -534,21 +903,20 @@
                         lightboxVideo.classList.add('fade-in');
                     }
                     
-                    lightboxCaption.textContent = item.filename;
+                    lightboxCaption.textContent = item.filename.split('/').pop();
                     
                     setTimeout(() => {
                         lightboxImage.classList.remove('fade-in');
                         lightboxVideo.classList.remove('fade-in');
-                    }, 300);
-                }, 300);
+                    }, 350);
+                }, 350);
             }
 
-            // Toggle fullscreen
-            function toggleFullscreen() {
+            // Alternar tela cheia
+            function alternarTelaCheia() {
                 isFullscreen = !isFullscreen;
                 lightbox.classList.toggle('fullscreen', isFullscreen);
                 
-                // Update fullscreen button icon
                 const icon = fullscreenBtn.querySelector('svg');
                 if (isFullscreen) {
                     icon.innerHTML = '<path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/>';
@@ -557,40 +925,69 @@
                 }
             }
 
-            // Keyboard navigation
+            // Baixar arquivo
+            function baixarArquivo() {
+                const item = galleryItems[currentIndex];
+                
+                // Verificar se é uma URL de dados (data URL)
+                if (item.filename.startsWith('data:')) {
+                    const link = document.createElement('a');
+                    link.href = item.filename;
+                    link.download = `galeria-${currentIndex + 1}.${item.type === 'image' ? 'jpg' : 'mp4'}`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } else {
+                    // Para arquivos que não são data URLs (os originais)
+                    const link = document.createElement('a');
+                    link.href = item.filename;
+                    link.download = item.filename.split('/').pop();
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+            }
+
+            // Navegação por teclado
             document.addEventListener('keydown', (e) => {
                 if (!lightbox.classList.contains('active')) return;
                 
                 switch (e.key) {
                     case 'ArrowLeft':
-                        prevItem();
+                        itemAnterior();
                         break;
                     case 'ArrowRight':
-                        nextItem();
+                        proximoItem();
                         break;
                     case 'Escape':
                         if (isFullscreen) {
-                            toggleFullscreen();
+                            alternarTelaCheia();
                         } else {
-                            closeLightbox();
+                            fecharLightbox();
                         }
                         break;
                     case 'f':
-                        toggleFullscreen();
+                    case 'F':
+                        alternarTelaCheia();
+                        break;
+                    case 'd':
+                    case 'D':
+                        baixarArquivo();
                         break;
                 }
             });
 
             // Event listeners
-            prevBtn.addEventListener('click', prevItem);
-            nextBtn.addEventListener('click', nextItem);
-            closeBtn.addEventListener('click', closeLightbox);
-            fullscreenBtn.addEventListener('click', toggleFullscreen);
+            prevBtn.addEventListener('click', itemAnterior);
+            nextBtn.addEventListener('click', proximoItem);
+            closeBtn.addEventListener('click', fecharLightbox);
+            fullscreenBtn.addEventListener('click', alternarTelaCheia);
+            downloadBtn.addEventListener('click', baixarArquivo);
             
-            // Close lightbox when clicking on the background
+            // Fechar lightbox ao clicar no fundo
             lightbox.addEventListener('click', (e) => {
                 if (e.target === lightbox) {
-                    closeLightbox();
+                    fecharLightbox();
                 }
             });
         });
