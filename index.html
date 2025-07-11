@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="icon" href="home.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary: #D94343;
+            --on-primary: #FFFFFF;
+            --primary-container: #FFE0E0;
+            --on-primary-container: #5A0B0B;
+            --background: #FFF5F5;
+            --on-background: #2B1212;
+            --surface: #FFFFFF;
+            --on-surface: #2B1212;
+            --secondary: #A37A7A;
+            --tertiary: #E26A6A;
+            --outline: #E4B3B3;
+        }
+
+        body {
+            font-family: 'Roboto', system-ui, -apple-system, sans-serif;
+            background-color: var(--background);
+            color: var(--on-background);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            animation: fadeIn 800ms ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .login-container {
+            animation: fadeIn 500ms ease-out;
+        }
+
+        .home-container {
+            opacity: 0;
+            animation: fadeIn 500ms ease-out forwards;
+            animation-delay: 300ms;
+        }
+
+        .fade-out {
+            animation: fadeOut 300ms ease-out forwards;
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Tela de Login -->
+    <div id="login-container" class="login-container">
+        <div class="w-64 h-80 bg-[var(--primary-container)] rounded shadow flex flex-col justify-between p-3">       
+            <form id="login-form" class="text-[var(--primary)]" action="" method="post">
+                <fieldset class="border-4 border-dotted border-[var(--primary)] p-5">
+                    <legend class="px-2 italic -mx-2">Bem-vinda de volta!</legend>
+                    <label class="text-xs font-bold after:content-['*'] after:text-red-400" for="username">Nome</label>     
+                    <input id="username" class="w-full p-2 mb-2 mt-1 outline-none ring-none focus:ring-2 focus:ring-[var(--primary)]" type="text" required>   
+                    <label class="text-xs font-bold after:content-['*'] after:text-red-400" for="password">Senha</label>
+                    <input id="password" class="w-full p-2 mb-2 mt-1 outline-none ring-none focus:ring-2 focus:ring-[var(--primary)]" type="password" required>
+                    <button type="submit" class="w-full rounded bg-[var(--primary)] text-[var(--on-primary)] p-2 text-center font-bold hover:bg-[var(--tertiary)]">Entrar</button>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tela Home (inicialmente escondida) -->
+    <div id="home-container" class="home-container hidden flex-col items-center">
+        <h1 class="text-2xl font-bold text-[var(--primary)] mb-8">Onde vamos hoje, meu amor? :o</h1>
+        
+        <div class="flex flex-col gap-4">
+            <a href="diario.html" class="w-64 rounded bg-[var(--primary)] text-[var(--on-primary)] p-4 text-center font-bold hover:bg-[var(--tertiary)] transition-colors">
+                Diário
+            </a>
+            <a href="galeria.html" class="w-64 rounded bg-[var(--primary)] text-[var(--on-primary)] p-4 text-center font-bold hover:bg-[var(--tertiary)] transition-colors">
+                Galeria
+            </a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('login-form');
+            const loginContainer = document.getElementById('login-container');
+            const homeContainer = document.getElementById('home-container');
+            let loginAttempts = 0;
+
+            // Nomes e senhas válidos
+            const validNames = ['Manu', 'Nanu', 'manu', 'nanu', 'amor', 'Amor', 'princesa', 'Princesa', 'Manoella', 'manoella', 'manoela', 'Manoela'];
+            const validPasswords = ['euteamo', 'EUTEAMO', 'eu te amo', 'EU TE AMO'];
+
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+
+                // Verificar credenciais
+                if (validNames.includes(username) && validPasswords.includes(password)) {
+                    // Login bem-sucedido
+                    loginContainer.classList.add('fade-out');
+                    
+                    setTimeout(() => {
+                        loginContainer.classList.add('hidden');
+                        homeContainer.classList.remove('hidden');
+                    }, 300);
+                } else {
+                    // Login falhou
+                    loginAttempts++;
+                    
+                    if (loginAttempts >= 3) {
+                        alert('Senha incorreta, Amor!');
+                        setTimeout(() => {
+                            window.close();
+                        }, 1000);
+                    } else {
+                        alert('Senha incorreta, Amor!');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
