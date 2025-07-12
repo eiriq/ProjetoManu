@@ -261,9 +261,43 @@
             margin-top: 20px;
         }
 
+        .page-indicator-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
         .page-indicator {
             color: var(--secondary);
             font-size: 0.9rem;
+        }
+
+        .page-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-btn {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            color: var(--secondary);
+            transition: color 0.2s ease;
+        }
+
+        .action-btn:hover {
+            color: var(--primary);
+        }
+
+        .action-btn svg {
+            width: 100%;
+            height: 100%;
         }
 
         .diary-controls {
@@ -527,8 +561,8 @@
 
     <div class="container">
         <header>
-            <h1>Seu diário:)</h1>
-            <p class="subtitle">Seu espaço pessoal, pra voce :D</p>
+            <h1>Diário Material You</h1>
+            <p class="subtitle">Seu espaço pessoal para reflexões e memórias</p>
         </header>
 
         <button class="start-btn" id="start-btn">Começar a escrever!</button>
@@ -537,7 +571,21 @@
     <div class="diary-container" id="diary-container">
         <div class="diary-header">
             <h2 class="diary-title" id="diary-title">Meu Diário</h2>
-            <span class="page-indicator" id="page-indicator">Página 1 de 1</span>
+            <div class="page-indicator-container">
+                <span class="page-indicator" id="page-indicator">Página 1 de 1</span>
+                <div class="page-actions">
+                    <button class="action-btn" id="download-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                        </svg>
+                    </button>
+                    <button class="action-btn" id="info-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
         </div>
 
         <div class="diary-pages" id="diary-pages">
@@ -567,6 +615,17 @@
         </div>
     </div>
 
+    <!-- Modal de download -->
+    <div class="confirm-modal" id="download-modal">
+        <div class="confirm-content">
+            <p class="confirm-message" id="download-message">O que você deseja baixar?</p>
+            <div class="confirm-buttons">
+                <button class="confirm-btn yes" id="download-all-btn">Todas as páginas</button>
+                <button class="confirm-btn no" id="download-current-btn">Página atual</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast notification -->
     <div class="toast" id="toast"></div>
 
@@ -592,6 +651,12 @@
             const confirmDeleteAllNo = document.getElementById('confirm-delete-all-no');
             const closePageBtn = document.getElementById('close-page-btn');
             const toast = document.getElementById('toast');
+            const downloadBtn = document.getElementById('download-btn');
+            const infoBtn = document.getElementById('info-btn');
+            const downloadModal = document.getElementById('download-modal');
+            const downloadMessage = document.getElementById('download-message');
+            const downloadAllBtn = document.getElementById('download-all-btn');
+            const downloadCurrentBtn = document.getElementById('download-current-btn');
 
             // Estado do diário
             let pages = [];
@@ -904,6 +969,45 @@
                 renderCurrentPage();
             }
 
+            // Baixar conteúdo como arquivo
+            function downloadContent(content, filename) {
+                const blob = new Blob([content], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+
+            // Baixar página atual
+            function downloadCurrentPage() {
+                const currentPage = pages[currentPageIndex];
+                const date = new Date(currentPage.date);
+                const formattedDate = date.toISOString().split('T')[0];
+                const filename = `diario-${formattedDate}-pagina-${currentPageIndex + 1}.txt`;
+                const content = `Título: ${diaryTitleText}\nData: ${formatDate(currentPage.date)}\n\n${currentPage.content}`;
+                downloadContent(content, filename);
+            }
+
+            // Baixar todas as páginas
+            function downloadAllPages() {
+                const date = new Date().toISOString().split('T')[0];
+                const filename = `diario-completo-${date}.txt`;
+                
+                let content = `Título: ${diaryTitleText}\n\n`;
+                
+                pages.forEach((page, index) => {
+                    content += `=== Página ${index + 1} ===\n`;
+                    content += `Data: ${formatDate(page.date)}\n\n`;
+                    content += `${page.content}\n\n`;
+                });
+                
+                downloadContent(content, filename);
+            }
+
             // Editar título do diário
             function setupTitleEditing() {
                 diaryTitle.addEventListener('click', () => {
@@ -959,14 +1063,14 @@
             // Event listeners
             startBtn.addEventListener('click', openDiary);
             closePageBtn.addEventListener('click', () => {
-    // Se o diário estiver aberto, feche-o
-    if (diaryContainer.classList.contains('active')) {
-        closeDiary();
-    } else {
-        // Se estiver na página inicial, redirecione para index.html
-        window.location.href = 'index.html';
-    }
-});
+                // Se o diário estiver aberto, feche-o
+                if (diaryContainer.classList.contains('active')) {
+                    closeDiary();
+                } else {
+                    // Se estiver na página inicial, redirecione para index.html
+                    window.location.href = 'index.html';
+                }
+            });
 
             confirmYes.addEventListener('click', () => {
                 if (pageToDelete !== null) {
@@ -990,6 +1094,26 @@
                 confirmDeleteAllModal.classList.remove('active');
             });
 
+            // Download listeners
+            downloadBtn.addEventListener('click', () => {
+                downloadModal.classList.add('active');
+            });
+
+            downloadAllBtn.addEventListener('click', () => {
+                downloadAllPages();
+                downloadModal.classList.remove('active');
+            });
+
+            downloadCurrentBtn.addEventListener('click', () => {
+                downloadCurrentPage();
+                downloadModal.classList.remove('active');
+            });
+
+            // Info button listener
+            infoBtn.addEventListener('click', () => {
+                alert('Versão atual: 2.0 - 11 de Jul, 2025');
+            });
+
             // Fechar modais ao clicar fora
             confirmModal.addEventListener('click', (e) => {
                 if (e.target === confirmModal) {
@@ -1001,6 +1125,12 @@
             confirmDeleteAllModal.addEventListener('click', (e) => {
                 if (e.target === confirmDeleteAllModal) {
                     confirmDeleteAllModal.classList.remove('active');
+                }
+            });
+
+            downloadModal.addEventListener('click', (e) => {
+                if (e.target === downloadModal) {
+                    downloadModal.classList.remove('active');
                 }
             });
 
