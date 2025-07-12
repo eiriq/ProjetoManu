@@ -67,6 +67,36 @@
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
         }
 
+        .info-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--primary-container);
+            color: var(--on-primary-container);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-duration) ease;
+            z-index: 100;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-btn:hover {
+            background-color: var(--primary);
+            color: var(--on-primary);
+            transform: scale(1.1);
+        }
+
+        .info-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
         .close-btn:hover {
             transform: scale(1.1);
             background-color: var(--on-primary-container);
@@ -114,11 +144,35 @@
             margin: 0 auto;
         }
 
-        .gallery {
+        /* Categorias e divisões */
+        .gallery-section {
+            margin-bottom: 40px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--outline);
+        }
+
+        .section-title {
+            color: var(--primary);
+            font-size: 1.4rem;
+            font-weight: 500;
+        }
+
+        .section-date {
+            color: var(--secondary);
+            font-size: 0.9rem;
+        }
+
+        .gallery-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: var(--grid-gap);
-            margin: 0 auto;
         }
 
         .gallery-item {
@@ -539,7 +593,7 @@
                 padding: var(--section-spacing) 16px;
             }
 
-            .gallery {
+            .gallery-grid {
                 grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             }
 
@@ -556,14 +610,21 @@
                 font-size: 0.9rem;
             }
 
-            .close-btn {
+            .close-btn, .info-btn {
                 top: 15px;
-                left: 15px;
                 width: 36px;
                 height: 36px;
             }
 
-            .close-btn svg {
+            .close-btn {
+                left: 15px;
+            }
+
+            .info-btn {
+                right: 15px;
+            }
+
+            .close-btn svg, .info-btn svg {
                 width: 20px;
                 height: 20px;
             }
@@ -576,7 +637,7 @@
                 --section-spacing: 20px;
             }
 
-            .gallery {
+            .gallery-grid {
                 grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             }
 
@@ -615,21 +676,28 @@
                 font-size: 1rem;
             }
 
-            .close-btn {
+            .close-btn, .info-btn {
                 top: 12px;
-                left: 12px;
                 width: 32px;
                 height: 32px;
             }
 
-            .close-btn svg {
+            .close-btn {
+                left: 12px;
+            }
+
+            .info-btn {
+                right: 12px;
+            }
+
+            .close-btn svg, .info-btn svg {
                 width: 18px;
                 height: 18px;
             }
         }
 
         @media (max-width: 400px) {
-            .gallery {
+            .gallery-grid {
                 grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
             }
         }
@@ -642,14 +710,20 @@
         </svg>
     </button>
 
+    <button class="info-btn" id="info-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+        </svg>
+    </button>
+
     <div class="container">
         <header>
             <h1>Nossa galeria:D</h1>
             <p class="subtitle">Uma galeria pros nossos momentos:)</p>
         </header>
 
-        <div class="gallery" id="gallery">
-            <!-- Itens da galeria serão inseridos aqui pelo JavaScript -->
+        <div id="gallery-container">
+            <!-- Seções serão inseridas aqui pelo JavaScript -->
         </div>
     </div>
 
@@ -706,54 +780,54 @@
             
             // Dados iniciais dos itens da galeria
             const initialGalleryItems = [
-                { filename: '1.jpeg', type: 'image' },
-                { filename: '2.jpeg', type: 'image' },
-                { filename: '3.jpeg', type: 'image' },
-                { filename: '5.jpeg', type: 'image' },
-                { filename: '6.jpeg', type: 'image' },
-                { filename: '7.jpeg', type: 'image' },
-                { filename: '8.jpeg', type: 'image' },
-                { filename: '10.jpeg', type: 'image' },
-                { filename: '11.jpeg', type: 'image' },
-                { filename: '12.jpeg', type: 'image' },
-                { filename: '13.jpeg', type: 'image' },
-                { filename: '14.jpeg', type: 'image' },
-                { filename: '14.mp4', type: 'video' },
-                { filename: '15.jpeg', type: 'image' },
-                { filename: '16.jpeg', type: 'image' },
-                { filename: '17.jpeg', type: 'image' },
-                { filename: '17.png', type: 'image' },
-                { filename: '18.jpeg', type: 'image' },
-                { filename: '19.jpeg', type: 'image' },
-                { filename: '20.jpeg', type: 'image' },
-                { filename: '21.mp4', type: 'video' },
-                { filename: '22.jpeg', type: 'image' },
-                { filename: '23.jpeg', type: 'image' },
-                { filename: '24.jpeg', type: 'image' },
-                { filename: '25.mp4', type: 'video' },
-                { filename: '26.jpeg', type: 'image' },
-                { filename: '27.jpeg', type: 'image' },
-                { filename: '28.png', type: 'image' },
-                { filename: '29.png', type: 'image' },
-                { filename: '30.png', type: 'image' },
-                { filename: '31.png', type: 'image' },
-                { filename: '32.png', type: 'image' },
-                { filename: '33.png', type: 'image' },
-                { filename: '34.png', type: 'image' },
-                { filename: '35.png', type: 'image' },
-                { filename: '36.png', type: 'image' },
-                { filename: '37.png', type: 'image' },
-                { filename: '38.jpg', type: 'image' },
-                { filename: '39.jpg', type: 'image' },
-                { filename: '40.jpg', type: 'image' },
-                { filename: '41.png', type: 'image' },
-                { filename: '42.mp4', type: 'video' }
+                { filename: '1.jpeg', type: 'image', date: '2025-07-10', category: 'fotos' },
+                { filename: '2.jpeg', type: 'image', date: '2025-07-10', category: 'fotos' },
+                { filename: '3.jpeg', type: 'image', date: '2025-07-09', category: 'fotos' },
+                { filename: '5.jpeg', type: 'image', date: '2025-07-09', category: 'fotos' },
+                { filename: '6.jpeg', type: 'image', date: '2025-07-08', category: 'fotos' },
+                { filename: '7.jpeg', type: 'image', date: '2025-07-08', category: 'fotos' },
+                { filename: '8.jpeg', type: 'image', date: '2025-07-07', category: 'fotos' },
+                { filename: '10.jpeg', type: 'image', date: '2025-07-07', category: 'fotos' },
+                { filename: '11.jpeg', type: 'image', date: '2025-07-06', category: 'fotos' },
+                { filename: '12.jpeg', type: 'image', date: '2025-07-06', category: 'fotos' },
+                { filename: '13.jpeg', type: 'image', date: '2025-07-05', category: 'fotos' },
+                { filename: '14.jpeg', type: 'image', date: '2025-07-05', category: 'fotos' },
+                { filename: '14.mp4', type: 'video', date: '2025-07-05', category: 'videos' },
+                { filename: '15.jpeg', type: 'image', date: '2025-07-04', category: 'fotos' },
+                { filename: '16.jpeg', type: 'image', date: '2025-07-04', category: 'fotos' },
+                { filename: '17.jpeg', type: 'image', date: '2025-07-03', category: 'fotos' },
+                { filename: '17.png', type: 'image', date: '2025-07-03', category: 'prints' },
+                { filename: '18.jpeg', type: 'image', date: '2025-07-02', category: 'fotos' },
+                { filename: '19.jpeg', type: 'image', date: '2025-07-02', category: 'fotos' },
+                { filename: '20.jpeg', type: 'image', date: '2025-07-01', category: 'fotos' },
+                { filename: '21.mp4', type: 'video', date: '2025-07-01', category: 'videos' },
+                { filename: '22.jpeg', type: 'image', date: '2025-06-30', category: 'fotos' },
+                { filename: '23.jpeg', type: 'image', date: '2025-06-30', category: 'fotos' },
+                { filename: '24.jpeg', type: 'image', date: '2025-06-29', category: 'fotos' },
+                { filename: '25.mp4', type: 'video', date: '2025-06-29', category: 'videos' },
+                { filename: '26.jpeg', type: 'image', date: '2025-06-28', category: 'fotos' },
+                { filename: '27.jpeg', type: 'image', date: '2025-06-28', category: 'fotos' },
+                { filename: '28.png', type: 'image', date: '2025-06-27', category: 'prints' },
+                { filename: '29.png', type: 'image', date: '2025-06-27', category: 'prints' },
+                { filename: '30.png', type: 'image', date: '2025-06-26', category: 'prints' },
+                { filename: '31.png', type: 'image', date: '2025-06-26', category: 'prints' },
+                { filename: '32.png', type: 'image', date: '2025-06-25', category: 'prints' },
+                { filename: '33.png', type: 'image', date: '2025-06-25', category: 'prints' },
+                { filename: '34.png', type: 'image', date: '2025-06-24', category: 'prints' },
+                { filename: '35.png', type: 'image', date: '2025-06-24', category: 'prints' },
+                { filename: '36.png', type: 'image', date: '2025-06-23', category: 'prints' },
+                { filename: '37.png', type: 'image', date: '2025-06-23', category: 'prints' },
+                { filename: '38.jpg', type: 'image', date: '2025-06-22', category: 'fotos' },
+                { filename: '39.jpg', type: 'image', date: '2025-06-22', category: 'fotos' },
+                { filename: '40.jpg', type: 'image', date: '2025-06-21', category: 'fotos' },
+                { filename: '41.png', type: 'image', date: '2025-06-21', category: 'prints' },
+                { filename: '42.mp4', type: 'video', date: '2025-06-20', category: 'videos' }
             ];
 
             // Carregar itens do localStorage ou usar os iniciais
             let galleryItems = JSON.parse(localStorage.getItem(STORAGE_KEY)) || initialGalleryItems;
 
-            const gallery = document.getElementById('gallery');
+            const galleryContainer = document.getElementById('gallery-container');
             const lightbox = document.getElementById('lightbox');
             const lightboxImage = document.getElementById('lightbox-image');
             const lightboxVideo = document.getElementById('lightbox-video');
@@ -765,9 +839,20 @@
             const downloadBtn = document.getElementById('download-btn');
             const loadingContainer = document.getElementById('loading-container');
             const closePageBtn = document.getElementById('close-page-btn');
+            const infoBtn = document.getElementById('info-btn');
 
             let currentIndex = 0;
             let isFullscreen = false;
+
+            // Função para formatar data
+            function formatDate(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('pt-BR', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                });
+            }
 
             // Função para salvar itens no localStorage
             function saveGalleryItems() {
@@ -851,15 +936,98 @@
                 return addButton;
             }
 
-            // Função para renderizar a galeria
-            function renderGallery() {
-                gallery.innerHTML = '';
+            // Função para criar uma seção da galeria
+            function createGallerySection(title, items, date = '') {
+                const section = document.createElement('div');
+                section.className = 'gallery-section';
                 
-                galleryItems.forEach((item, index) => {
-                    gallery.appendChild(createGalleryItem(item, index));
+                const sectionHeader = document.createElement('div');
+                sectionHeader.className = 'section-header';
+                
+                const sectionTitle = document.createElement('h2');
+                sectionTitle.className = 'section-title';
+                sectionTitle.textContent = title;
+                
+                if (date) {
+                    const sectionDate = document.createElement('span');
+                    sectionDate.className = 'section-date';
+                    sectionDate.textContent = formatDate(date);
+                    sectionHeader.appendChild(sectionDate);
+                }
+                
+                sectionHeader.prepend(sectionTitle);
+                section.appendChild(sectionHeader);
+                
+                const galleryGrid = document.createElement('div');
+                galleryGrid.className = 'gallery-grid';
+                
+                items.forEach((item, index) => {
+                    galleryGrid.appendChild(createGalleryItem(item, index));
                 });
                 
-                gallery.appendChild(createAddButton());
+                // Adicionar botão de adicionar apenas na última seção
+                if (!date) {
+                    galleryGrid.appendChild(createAddButton());
+                }
+                
+                section.appendChild(galleryGrid);
+                return section;
+            }
+
+            // Função para agrupar itens por categoria
+            function groupByCategory(items) {
+                return items.reduce((acc, item) => {
+                    if (!acc[item.category]) {
+                        acc[item.category] = [];
+                    }
+                    acc[item.category].push(item);
+                    return acc;
+                }, {});
+            }
+
+            // Função para agrupar itens por data
+            function groupByDate(items) {
+                return items.reduce((acc, item) => {
+                    if (!acc[item.date]) {
+                        acc[item.date] = [];
+                    }
+                    acc[item.date].push(item);
+                    return acc;
+                }, {});
+            }
+
+            // Função para renderizar a galeria organizada
+            function renderGallery() {
+                galleryContainer.innerHTML = '';
+                
+                // Primeiro agrupamos por categoria
+                const categories = {
+                    'fotos': 'Fotos',
+                    'videos': 'Vídeos',
+                    'prints': 'Capturas de tela'
+                };
+                
+                const itemsByCategory = groupByCategory(galleryItems);
+                
+                // Criar seções para cada categoria
+                for (const [categoryKey, categoryName] of Object.entries(categories)) {
+                    if (itemsByCategory[categoryKey] && itemsByCategory[categoryKey].length > 0) {
+                        // Dentro de cada categoria, agrupamos por data
+                        const itemsByDate = groupByDate(itemsByCategory[categoryKey]);
+                        
+                        // Ordenar as datas da mais recente para a mais antiga
+                        const sortedDates = Object.keys(itemsByDate).sort((a, b) => new Date(b) - new Date(a));
+                        
+                        // Criar uma seção para cada data
+                        for (const date of sortedDates) {
+                            const sectionTitle = `${categoryName} - ${formatDate(date)}`;
+                            galleryContainer.appendChild(createGallerySection(sectionTitle, itemsByDate[date], date));
+                        }
+                    }
+                }
+                
+                // Adicionar seção de upload no final
+                galleryContainer.appendChild(createGallerySection('Adicionar mais itens', []));
             }
 
             // Inicializar a galeria
@@ -867,7 +1035,21 @@
 
             // Abrir lightbox
             function abrirLightbox(index) {
-                currentIndex = index;
+                // Encontrar o item correto considerando todas as seções
+                let flatIndex = 0;
+                let targetItem = null;
+                
+                for (const item of galleryItems) {
+                    if (flatIndex === index) {
+                        targetItem = item;
+                        break;
+                    }
+                    flatIndex++;
+                }
+                
+                if (!targetItem) return;
+                
+                currentIndex = galleryItems.indexOf(targetItem);
                 const item = galleryItems[currentIndex];
                 
                 if (item.type === 'image') {
@@ -1023,6 +1205,10 @@
             downloadBtn.addEventListener('click', baixarArquivo);
             closePageBtn.addEventListener('click', () => {
                 window.location.href = 'index.html';
+            });
+            
+            infoBtn.addEventListener('click', () => {
+                alert('Versão atual: 2.0 - 11 de Jul, 2025');
             });
             
             // Fechar lightbox ao clicar no fundo
